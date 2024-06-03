@@ -38,7 +38,8 @@ const run = async (respawn = true) => {
     // Make sure the main process loads latest preload script.
     await preload.rebuild()
     log('[main] spawning', electron)
-    child = spawn(electron, ['.'], { stdio: 'overlapped' })
+    // `shell: true` -- https://github.com/nodejs/node/issues/52554
+    child = spawn(electron, ['.'], { stdio: 'overlapped', shell: process.platform === 'win32' })
     child.on('close', on_close)
     child.stdout?.on('data', (chunk: Buffer) => {
       let text = chunk.toString().trimEnd()
