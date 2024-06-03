@@ -55,3 +55,9 @@ ipcMain.handle('hello', (event, message = 'world') => {
     dialog.showMessageBox(owner, { message: `Hello, ${message}!` })
   : dialog.showMessageBox({ message: `Hello, ${message}!` })
 })
+
+dark$.reaction(dark => {
+  for (let win of BrowserWindow.getAllWindows()) {
+    win.setBackgroundColor(dark ? '#000' : '#fff')
+  }
+})
