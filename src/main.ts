@@ -32,6 +32,18 @@ app.whenReady().then(() => {
     // https://github.com/electron/electron/issues/42055
   })
   main.loadURL(__URL__)
+  main.webContents.setWindowOpenHandler((details) => {
+    const [x, y] = BrowserWindow.getFocusedWindow()?.getPosition() || [0, 0]
+    return {
+      action: 'allow',
+      overrideBrowserWindowOptions: {
+        backgroundColor: dark$.value ? '#000' : '#fff',
+        width: 400, height: 250,
+        x: x + 25,
+        y: y + 20,
+      }
+    }
+  })
 })
 
 app.on('window-all-closed', () => app.quit())
