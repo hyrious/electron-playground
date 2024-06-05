@@ -13,6 +13,10 @@ const dark$ = from(() => nativeTheme.shouldUseDarkColors, (notify) => {
 // Must use `whenReady().then(...)`, `await whenReady()` will never resolve.
 // https://github.com/electron/electron/issues/40719
 app.whenReady().then(() => {
+  const open_devtools = (win: BrowserWindow) => {
+    win.webContents.openDevTools({ mode: 'detach' })
+    win.webContents.on('did-create-window', open_devtools)
+  }
   let main = new BrowserWindow({
     show: false,
     useContentSize: true,
@@ -26,11 +30,11 @@ app.whenReady().then(() => {
   // It doesn't help much, still needs `backgroundColor` to help reducing flash.
   main.once('ready-to-show', () => {
     main.showInactive()
-    main.webContents.openDevTools({ mode: 'detach' })
     // macOS: Move focus to previous app, convenient when local debugging.
     if (app.hide) app.hide()
     // Windows: Set default fonts, which by now is too hard to read.
     // https://github.com/electron/electron/issues/42055
+    open_devtools(main)
   })
   main.loadURL(__URL__)
   main.webContents.setWindowOpenHandler((details) => {
@@ -46,9 +50,6 @@ app.whenReady().then(() => {
         }
       }
     }
-  })
-  main.webContents.on('did-create-window', (win) => {
-    win.webContents.openDevTools({ mode: 'detach' })
   })
 })
 
