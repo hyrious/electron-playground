@@ -1,4 +1,5 @@
 import { app, BrowserWindow, dialog, ipcMain, nativeTheme } from 'electron'
+import { readFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import { from } from 'value-enhancer'
 
@@ -38,11 +39,16 @@ app.whenReady().then(() => {
       action: 'allow',
       overrideBrowserWindowOptions: {
         backgroundColor: dark$.value ? '#000' : '#fff',
-        width: 400, height: 250,
-        x: x + 25,
-        y: y + 20,
+        width: 640, height: 480,
+        x: x + 25, y: y + 20,
+        webPreferences: {
+          preload: fileURLToPath(new URL('./preload.js?' + Date.now(), import.meta.url)),
+        }
       }
     }
+  })
+  main.webContents.on('did-create-window', (win) => {
+    win.webContents.openDevTools({ mode: 'detach' })
   })
 })
 
@@ -54,6 +60,15 @@ ipcMain.handle('hello', (event, message = 'world') => {
   return (owner = BrowserWindow.fromWebContents(event.sender)) ?
     dialog.showMessageBox(owner, { message: `Hello, ${message}!` })
   : dialog.showMessageBox({ message: `Hello, ${message}!` })
+})
+
+ipcMain.handle('loadEnv', async () => {
+  let text = await readFile(new URL('../.env', import.meta.url), 'utf8')
+  let env = { __proto__: null } as unknown as Record<string, string>
+  for (let row of text.split(/\r\n|\r|\n/g)) if (row) {
+    let [k, v] = row.split('='); env[k] = v
+  }
+  return env
 })
 
 dark$.reaction(dark => {

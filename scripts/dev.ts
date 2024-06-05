@@ -58,9 +58,9 @@ let renderer = await context({
   entryPoints: ['./src/renderer'],
   bundle: true,
   format: 'esm',
-  outfile: 'dist/renderer.js',
+  outdir: 'dist',
   sourcemap: true,
-  external: ['electron'],
+  external: ['electron', 'jspdf'],
   define: { __DEV__: 'true' },
   write: false,
 })

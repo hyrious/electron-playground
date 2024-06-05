@@ -2,12 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Test</title>
   <meta name="color-scheme" content="light dark">
+  <style>
+    *, *::before, *::after { box-sizing: border-box }
+    html, body { height: 100% }
+    body { margin: 0 }
+    #whiteboard { height: 100% }
+    .btn { position: fixed; z-index: 1; top: 10px; left: 10px }
+  </style>
 </head>
 <body>
+  <div id="whiteboard"></div>
   <script type="module" src="dist/renderer.js"></script>
 </body>
 </html>
