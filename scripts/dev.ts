@@ -38,7 +38,7 @@ const run = async (respawn = true) => {
     // Make sure the main process loads latest preload script.
     await preload.rebuild()
     log('[main] spawning', electron)
-    // `shell: true` -- https://github.com/nodejs/node/issues/52554
+    // CMD scripts are blocked unless using `shell: true` -- https://github.com/nodejs/node/issues/52554
     child = spawn(electron, ['.'], { stdio: 'overlapped', shell: process.platform === 'win32' })
     child.on('close', on_close)
     child.stdout?.on('data', (chunk: Buffer) => {
@@ -70,8 +70,6 @@ await renderer.watch()
 let preload = await context({
   entryPoints: ['./src/preload'],
   bundle: true,
-  // It is not actually commonjs, but we want to keep `require('electron')`.
-  // Caveats: you must make sure preload.js does not export any name.
   format: 'cjs',
   outfile: 'dist/preload.js',
   external: ['electron'],

@@ -12,6 +12,6 @@ const api = {
 
 contextBridge.exposeInMainWorld('electron', api)
 
-console.info('[preload] ready')
+console.info('[preload] ready', process.versions)
 
 export type NativeAPI = typeof api
